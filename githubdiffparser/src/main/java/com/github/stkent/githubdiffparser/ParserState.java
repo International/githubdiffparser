@@ -288,7 +288,7 @@ enum ParserState {
     }
     
     protected boolean matchesNeutralLinePattern(@NotNull final String line) {
-        return line.startsWith(" ");
+        return line.startsWith(" ") || line.equals("");
     }
 
     protected boolean matchesNoNewlineAtEndOfFileLinePattern(@NotNull final String line) {
