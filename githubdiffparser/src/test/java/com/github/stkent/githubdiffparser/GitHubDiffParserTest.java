@@ -45,6 +45,27 @@ import java.util.List;
 public class GitHubDiffParserTest {
 
     @Test
+    public void testParsingNotAAndB() throws Exception {
+        GitHubDiffParser parser = new GitHubDiffParser();
+        InputStream in = getClass().getResourceAsStream("not_a_and_b.diff");
+
+        // when
+        List<Diff> diffs = parser.parse(in);
+
+        // then
+        Assert.assertNotNull(diffs);
+        Assert.assertEquals(diffs.size(), 2);
+        Diff firstDiff = diffs.get(0);
+        Diff secondDiff = diffs.get(1);
+        Assert.assertEquals(firstDiff.getFromFileName(), "lib/git_diff.ex");
+        Assert.assertEquals(firstDiff.getToFileName(), "lib/git_diff.ex");
+
+        Assert.assertEquals(secondDiff.getFromFileName(), "lib/patch.ex");
+        Assert.assertEquals(secondDiff.getToFileName(), "lib/patch.ex");
+
+    }
+
+    @Test
     public void testParsingActualDiff() throws Exception {
         // given
         GitHubDiffParser parser = new GitHubDiffParser();

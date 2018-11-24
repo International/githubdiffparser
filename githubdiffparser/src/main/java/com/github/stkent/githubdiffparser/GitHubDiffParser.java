@@ -57,6 +57,8 @@ public class GitHubDiffParser {
         this.logToSout = logToSout;
     }
 
+    private Pattern filePattern = Pattern.compile("\\A\\w/");
+
     @NotNull
     public List<Diff> parse(InputStream in) {
         ResizingParseWindow window = new ResizingParseWindow(in);
@@ -165,7 +167,8 @@ public class GitHubDiffParser {
          * GitHub diff "from file" rows include an a/ prefix. We remove this to compute the actual (relative) path to
          * the file.
          */
-        if (fileName.startsWith("a/")) {
+        Matcher matcher = filePattern.matcher(fileName);
+        if (matcher.find()) {
             fileName = fileName.substring(2);
         }
 
@@ -179,7 +182,8 @@ public class GitHubDiffParser {
          * GitHub diff "to file" rows include a b/ prefix. We remove this to compute the actual (relative) path to the
          * file.
          */
-        if (fileName.startsWith("b/")) {
+        Matcher matcher = filePattern.matcher(fileName);
+        if (matcher.find()) {
             fileName = fileName.substring(2);
         }
 
