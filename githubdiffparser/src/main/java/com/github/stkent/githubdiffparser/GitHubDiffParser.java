@@ -81,6 +81,11 @@ public class GitHubDiffParser {
                     }
                     
                     currentDiff = new Diff();
+                    String components[] = currentLine.split(" ");
+                    if(components.length == 4) {
+                        currentDiff.setFromFileName(parseFileFromPrefixString(components[2]));
+                        currentDiff.setToFileName(parseFileFromPrefixString(components[3]));
+                    }
                     break;
                 case HEADER:
                     parseHeader(currentDiff, currentLine);
@@ -160,6 +165,15 @@ public class GitHubDiffParser {
         }
     }
 
+    private String parseFileFromPrefixString(final String fileName) {
+        Matcher matcher = filePattern.matcher(fileName);
+        if (matcher.find()) {
+            return fileName.substring(2);
+        }
+
+        return fileName;
+    }
+
     private void parseFromFile(final Diff currentDiff, final String currentLine) {
         String fileName = cutAfterTab(currentLine.substring(4)).trim();
         
@@ -167,10 +181,7 @@ public class GitHubDiffParser {
          * GitHub diff "from file" rows include an a/ prefix. We remove this to compute the actual (relative) path to
          * the file.
          */
-        Matcher matcher = filePattern.matcher(fileName);
-        if (matcher.find()) {
-            fileName = fileName.substring(2);
-        }
+        fileName = parseFileFromPrefixString(fileName);
 
         currentDiff.setFromFileName(fileName);
     }
@@ -182,10 +193,7 @@ public class GitHubDiffParser {
          * GitHub diff "to file" rows include a b/ prefix. We remove this to compute the actual (relative) path to the
          * file.
          */
-        Matcher matcher = filePattern.matcher(fileName);
-        if (matcher.find()) {
-            fileName = fileName.substring(2);
-        }
+        fileName = parseFileFromPrefixString(fileName);
 
         currentDiff.setToFileName(fileName);
     }

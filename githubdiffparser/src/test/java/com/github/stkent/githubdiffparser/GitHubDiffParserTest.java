@@ -45,24 +45,37 @@ import java.util.List;
 public class GitHubDiffParserTest {
 
     @Test
-    public void testParsingNotAAndB() throws Exception {
+    public void testNotAAndBAlsoContainsEmptyFiles() throws Exception {
         GitHubDiffParser parser = new GitHubDiffParser();
-        InputStream in = getClass().getResourceAsStream("not_a_and_b.diff");
+        InputStream in = getClass().getResourceAsStream("not_a_and_b_also_empty_files_added.diff");
 
         // when
         List<Diff> diffs = parser.parse(in);
 
         // then
         Assert.assertNotNull(diffs);
-        Assert.assertEquals(diffs.size(), 2);
+        Assert.assertEquals(diffs.size(), 4);
+
         Diff firstDiff = diffs.get(0);
         Diff secondDiff = diffs.get(1);
+        Diff thirdDiff = diffs.get(2);
+        Diff fourthDiff = diffs.get(3);
+
         Assert.assertEquals(firstDiff.getFromFileName(), "lib/git_diff.ex");
         Assert.assertEquals(firstDiff.getToFileName(), "lib/git_diff.ex");
+        Assert.assertEquals(firstDiff.getHunks().size(), 3);
 
-        Assert.assertEquals(secondDiff.getFromFileName(), "lib/patch.ex");
-        Assert.assertEquals(secondDiff.getToFileName(), "lib/patch.ex");
+        Assert.assertEquals(secondDiff.getFromFileName(), "lib/new.ex");
+        Assert.assertEquals(secondDiff.getToFileName(), "lib/new.ex");
+        Assert.assertEquals(secondDiff.getHunks().size(), 0);
 
+        Assert.assertEquals(thirdDiff.getFromFileName(), "lib/new2.ex");
+        Assert.assertEquals(thirdDiff.getToFileName(), "lib/new2.ex");
+        Assert.assertEquals(thirdDiff.getHunks().size(), 0);
+
+        Assert.assertEquals(fourthDiff.getFromFileName(), "lib/patch.ex");
+        Assert.assertEquals(fourthDiff.getToFileName(), "lib/patch.ex");
+        Assert.assertEquals(fourthDiff.getHunks().size(), 1);
     }
 
     @Test
